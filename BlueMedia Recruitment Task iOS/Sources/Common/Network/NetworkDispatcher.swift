@@ -5,8 +5,8 @@
 //  Created by Franciszek Czana on 24/02/2023.
 //
 
+import Combine
 import Foundation
-import RxSwift
 
 enum NetworkError: Error {
     case invalidBaseURL
@@ -20,15 +20,17 @@ final class NetworkDispatcher {
     
     func dispatch<T>(
         baseURLString: String,
-        request: APIRequest) -> Observable<T> where T: Decodable {
+        request: APIRequest)
+        -> AnyPublisher<T, Error> where T: Decodable {
             
         do {
             let urlRequest = try createURLRequest(baseURLString: baseURLString, from: request)
 
             return dataTask(for: urlRequest)
                 .flatMap { self.decodeResponse($0) }
+                .eraseToAnyPublisher()
         } catch {
-            return Observable.error(error)
+            return Fail(error: error).eraseToAnyPublisher()
         }
     }
 
@@ -36,41 +38,22 @@ final class NetworkDispatcher {
 
 private extension NetworkDispatcher {
     
-    func dataTask(for urlRequest: URLRequest) -> Observable<Data> {
-        return Observable.create {
-            observable in
-            
-            let task = URLSession.shared.dataTask(with: urlRequest) {
-                (data, response, error) in
-                if let error {
-                    observable.onError(error)
-                }
-                
+    func dataTask(for urlRequest: URLRequest) -> AnyPublisher<Data, Error> {
+        
+        return URLSession.shared.dataTaskPublisher(for: urlRequest)
+            .tryMap { data, response -> Data in
                 guard let httpResponse = response as? HTTPURLResponse else {
-                    observable.onError(NetworkError.invalidResponse)
-                    return
+                    throw NetworkError.invalidResponse
                 }
-                
+                            
                 let statusCode = httpResponse.statusCode
                 guard 200...299 ~= statusCode else {
-                    observable.onError(NetworkError.invalidStatusCode(statusCode))
-                    return
+                    throw NetworkError.invalidStatusCode(statusCode)
                 }
-                
-                guard let data = data else {
-                    observable.onError(NetworkError.invalidResponse)
-                    return
-                }
-                
-                observable.onNext(data)
+                            
+                return data
             }
-            
-            task.resume()
-            
-            return Disposables.create {
-                task.cancel()
-            }
-        }
+            .eraseToAnyPublisher()
     }
     
     func createURLRequest(baseURLString: String, from request: APIRequest) throws -> URLRequest {
@@ -100,13 +83,13 @@ private extension NetworkDispatcher {
         return urlRequest
     }
     
-    func decodeResponse<T>(_ data: Data) -> Observable<T> where T: Decodable {
-        do {
-            let response = try JSONDecoder().decode(T.self, from: data)
-            return .just(response)
-        } catch {
-            return .error(NetworkError.decodingFailed)
-        }
+    func decodeResponse<T>(_ data: Data)
+        -> AnyPublisher<T, Error> where T: Decodable {
+        
+        Just(data)
+            .decode(type: T.self, decoder: JSONDecoder())
+            .mapError { _ in NetworkError.decodingFailed }
+            .eraseToAnyPublisher()
     }
 }
 

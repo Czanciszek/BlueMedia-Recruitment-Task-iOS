@@ -25,8 +25,6 @@
 		375695C929A69A57003E8582 /* Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375695C829A69A57003E8582 /* Localized.swift */; };
 		375695CC29A6A40F003E8582 /* SectionSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375695CB29A6A40F003E8582 /* SectionSearchView.swift */; };
 		375695CF29A6D0E4003E8582 /* SearchEngineAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375695CE29A6D0E4003E8582 /* SearchEngineAPI.swift */; };
-		375695D329A6D178003E8582 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 375695D229A6D178003E8582 /* RxCocoa */; };
-		375695D529A6D178003E8582 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 375695D429A6D178003E8582 /* RxSwift */; };
 		375695D829A6D1EC003E8582 /* SearchEngineResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375695D729A6D1EC003E8582 /* SearchEngineResponse.swift */; };
 		375695DA29A7CA33003E8582 /* ConcreteSearchEngineAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375695D929A7CA33003E8582 /* ConcreteSearchEngineAPI.swift */; };
 		375695DD29A7CC2A003E8582 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375695DC29A7CC2A003E8582 /* APIRequest.swift */; };
@@ -138,8 +136,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				375695D529A6D178003E8582 /* RxSwift in Frameworks */,
-				375695D329A6D178003E8582 /* RxCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,8 +448,6 @@
 			);
 			name = "BlueMedia Recruitment Task iOS";
 			packageProductDependencies = (
-				375695D229A6D178003E8582 /* RxCocoa */,
-				375695D429A6D178003E8582 /* RxSwift */,
 			);
 			productName = "BlueMedia Recruitment Task iOS";
 			productReference = 3756956F29A6886D003E8582 /* BlueMedia Recruitment Task iOS.app */;
@@ -970,19 +964,6 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		375695D229A6D178003E8582 /* RxCocoa */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 375695D129A6D178003E8582 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxCocoa;
-		};
-		375695D429A6D178003E8582 /* RxSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 375695D129A6D178003E8582 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxSwift;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3756956729A6886D003E8582 /* Project object */;
 }

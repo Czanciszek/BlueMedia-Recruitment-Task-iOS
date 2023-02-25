@@ -5,19 +5,20 @@
 //  Created by Franciszek Czana on 22/02/2023.
 //
 
-import RxCocoa
-import RxSwift
+import Combine
+import Foundation
 
 final class DashboardViewModel {
     weak var coordinator : DashboardCoordinator?
     
     typealias Dependencies = SearchServiceContainer
     
-    private let searchResultsRelay = PublishRelay<[SearchResult]>()
-    private let errorSubject = PublishSubject<Error>()
-    private let disposeBag = DisposeBag()
-    
+    @Published private var searchResultsPublisher: [SearchResult] = []
+
     private let dependencies: Dependencies
+    
+    private var errorSubject: PassthroughSubject<Error, Never> = .init()
+    private var cancellables: Set<AnyCancellable> = []
     
     init(dependencies: Dependencies) {
         self.dependencies = dependencies
@@ -28,38 +29,39 @@ final class DashboardViewModel {
 
 extension DashboardViewModel: DashboardViewModelProtocol {
 
-    var searchResults: Driver<[SearchResult]> {
-        return searchResultsRelay.asDriver(onErrorDriveWith: .never())
+    var searchResults: AnyPublisher<[SearchResult], Never> {
+        return $searchResultsPublisher
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 
     func searchEngine(text: String) {
 
         dependencies.searchService
             .search(searchKey: text)
-            .subscribe(onNext: {
-                [weak self] result in
-                self?.searchResultsRelay.accept(result)
-            }, onError: {
-                [weak self] error in
-                self?.errorSubject.on(.next(error))
-            })
-            .disposed(by: disposeBag)
+            .catch {
+                [unowned self] error in
+                errorSubject.send(error)
+                return Just(searchResultsPublisher)
+            }
+            .sink {
+                [weak self] searchResults in
+                self?.searchResultsPublisher = searchResults
+            }
+            .store(in: &cancellables)
     }
     
 }
 
 private extension DashboardViewModel {
     
-    var errorDriver: Driver<Error> {
-        errorSubject.asDriver(onErrorDriveWith: .never())
-    }
-    
     func bindError() {
-        errorDriver
-            .drive(onNext: {
+        errorSubject
+            .receive(on: DispatchQueue.main)
+            .sink {
                 [weak self] error in
                 self?.coordinator?.presentError(error: error)
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &cancellables)
     }
 }

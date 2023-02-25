@@ -5,11 +5,11 @@
 //  Created by Franciszek Czana on 24/02/2023.
 //
 
-import RxSwift
+import Combine
 
 protocol SearchService {
 
-    func search(searchKey: String) -> Observable<[SearchResult]>
+    func search(searchKey: String) -> AnyPublisher<[SearchResult], Error>
 }
 
 protocol SearchServiceContainer {
