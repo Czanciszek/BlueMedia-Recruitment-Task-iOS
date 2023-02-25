@@ -8,6 +8,8 @@ I must say, I took to heart that it was written that app architecture will be al
 
 In the middle of doing this task I've got afraid that I'm doing some overkill here as it went over 4 hours trying to make it that way. But because I was already in the middle, I decided to finish it that way.
 
+I'm not also totally happy with UX that I've created. I have usually some ideas but more related having some example. I tried at least to use hex colors that I've spotted on linked website. To be honest, that's always been my downside to think about any UI design only from my head. :)
+
 ## Libraries
 
 From additional frameworks I've decided first to use RxSwift as I feel more strong with that library, however I read that you're trying to use Combine with SwiftUI so I've decided to migrate it at least to a Combine side.
