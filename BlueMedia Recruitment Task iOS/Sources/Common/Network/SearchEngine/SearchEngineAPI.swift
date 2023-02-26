@@ -5,13 +5,11 @@
 //  Created by Franciszek Czana on 22/02/2023.
 //
 
-import RxSwift
+import Combine
 
 protocol SearchEngineAPI {
 
-    func search(
-        key: String)
-        -> Observable<SearchEngineResponse>
+    func search(key: String) -> AnyPublisher<SearchEngineResponse, Error>
 
 }
 

@@ -5,8 +5,8 @@
 //  Created by Franciszek Czana on 23/02/2023.
 //
 
+import Combine
 import Foundation
-import RxSwift
 
 final class ConcreteSearchEngineAPI: SearchEngineAPI {
     
@@ -16,7 +16,7 @@ final class ConcreteSearchEngineAPI: SearchEngineAPI {
         self.networkDispatcher = networkDispatcher
     }
 
-    func search(key: String) -> Observable<SearchEngineResponse> {
+    func search(key: String) -> AnyPublisher<SearchEngineResponse, Error> {
 
         let baseURLString = APIBaseURLRequest.blueMediaHelp.urlString
         let request = SearchEngineRequest(searchQuery: key)

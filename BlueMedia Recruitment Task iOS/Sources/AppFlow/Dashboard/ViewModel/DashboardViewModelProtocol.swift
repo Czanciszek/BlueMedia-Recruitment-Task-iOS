@@ -5,11 +5,11 @@
 //  Created by Franciszek Czana on 22/02/2023.
 //
 
-import RxCocoa
+import Combine
 
 protocol DashboardViewModelProtocol: AnyObject {
 
-    var searchResults: Driver<[SearchResult]> { get }
+    var searchResults: AnyPublisher<[SearchResult], Never> { get }
 
     func searchEngine(text: String)
 }
